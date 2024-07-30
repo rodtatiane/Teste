@@ -15,48 +15,48 @@
         $url = "https://dummyjson.com/users" ;
 
         // Inicializando a sessão cURL
-        $ch = curl_init();
+        $churl = curl_init();
 
         // Configurando a URL e outras opções
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Retorna o resultado como uma string
+        curl_setopt($churl, CURLOPT_URL, $url);
+        curl_setopt($churl, CURLOPT_RETURNTRANSFER, true); // Retorna o resultado como uma string
 
         // Executando a requisição
-        $response = curl_exec($ch);
+        $response = curl_exec($churl);
 
         // Verificando se houve erro na requisição cURL
-        if (curl_errno($ch)) {
-            echo 'Erro: ' . curl_error($ch);
+        if (curl_errno($churl)) {
+            echo 'Erro: ' . curl_error($churl);
         } else {
             // Obtém o código de status da resposta de erro
-            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $httpcode = curl_getinfo($churl, CURLINFO_HTTP_CODE);
 
             // Decodificando a resposta JSON
-            $users = json_decode($response, true);
+            $usuario = json_decode($response, true);
 
             // Avaliando se a resposta contém a lista de usuários
-            if (isset($users['users'])) {
+            if (isset($usuario['users'])) {
                 // Array para armazenar usuários por estado
-                $usersByState = [];
+                $usuarioPorEstado = [];
 
                 // Separando os usuários por estado
-                foreach ($users['users'] as $user) {
-                    $state = $user['address']['state'];
-                    $usersByState[$state][] = $user;
+                foreach ($usuario['users'] as $user) {
+                    $estado = $user['address']['state'];
+                    $usuarioPorEstado[$estado][] = $user;
                 }
 
                 // Ordenando os usuários por nome dentro de cada estado
-                foreach ($usersByState as $state => &$users) {
-                    usort($users, function($a, $b) {
+                foreach ($usuarioPorEstado as $estado => &$usuario) {
+                    usort($usuario, function($a, $b) {
                         return strcmp($a['firstName'], $b['firstName']);
                     });
                 }
 
                 // Exibindo os usuários separados por estado e ordenados por nome
-                foreach ($usersByState as $state => $users) {
-                    echo "<h2>Estado: " . htmlspecialchars($state) . "</h2>";
+                foreach ($usuarioPorEstado as $estado => $usuario) {
+                    echo "<h2>Estado: " . htmlspecialchars($estado) . "</h2>";
                     echo "<div class='user-list'>";
-                    foreach ($users as $user) {
+                    foreach ($usuario as $user) {
                         echo "<div class='user'>";
                         echo "<p><strong>ID:</strong> " . htmlspecialchars($user['id']) . "</p>";
                         echo "<p><strong>Nome:</strong> " . htmlspecialchars($user['firstName']) . " " . htmlspecialchars($user['lastName']) . "</p>";
@@ -77,9 +77,10 @@
         }
 
         // Fechando a sessão cURL
-        curl_close($ch);
+        curl_close($churl);
         ?>
     </div>
 </body>
+</html>
 </html>
 
